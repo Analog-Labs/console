@@ -30,7 +30,7 @@ import useNominations from './useNominations.js';
 import useSortedTargets from './useSortedTargets.js';
 
 const HIDDEN_ACC = ['actions', 'payout'];
-const HIDDEN_TABS = ['actions', 'payout', 'slashes', 'targets'];
+const HIDDEN_TABS = ['payout', 'slashes', 'targets'];
 
 const OPT_MULTI = {
   defaultValue: [false, undefined, {}] as [boolean, BN | undefined, Record<string, boolean>],
