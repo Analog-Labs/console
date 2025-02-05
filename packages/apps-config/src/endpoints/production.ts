@@ -49,7 +49,7 @@ export const prodChains: Omit<EndpointOption, 'teleport'>[] = [
     },
     text: 'Analog Timechain',
     ui: {
-      color: '#5d3ef8',
+      color: '#9A74F7',
       identityIcon: 'beachball',
       logo: chainsAnalogSVG
     }
