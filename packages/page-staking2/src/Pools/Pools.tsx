@@ -32,7 +32,7 @@ function Pools ({ className, ids, ownPools, params }: Props): React.ReactElement
   );
 
   const noCreate = useMemo(
-    () => !ids || (!!params.maxPools && (ids.length > params.maxPools)),
+    () => !ids || (!!params.maxPools && (ids.length >= params.maxPools)),
     [ids, params]
   );
 

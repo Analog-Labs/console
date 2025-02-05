@@ -30,6 +30,7 @@ import useNominations from './useNominations.js';
 import useSortedTargets from './useSortedTargets.js';
 
 const HIDDEN_ACC = ['actions', 'payout'];
+const HIDDEN_TABS = ['actions', 'payout', 'slashes', 'targets'];
 
 const OPT_MULTI = {
   defaultValue: [false, undefined, {}] as [boolean, BN | undefined, Record<string, boolean>],
@@ -136,20 +137,20 @@ function StakingApp ({ basePath, className = '' }: Props): React.ReactElement<Pr
         hidden={
           areAccountsLoaded && !hasAccounts
             ? HIDDEN_ACC
-            : undefined
+            : HIDDEN_TABS
         }
         items={items}
       />
       <MarkPoolsWarning />
       <Routes>
         <Route path={basePath}>
-          <Route
+          {/* <Route
             element={
               <Bags ownStashes={ownStashes} />
             }
             path='bags'
-          />
-          <Route
+          /> */}
+          {/* <Route
             element={
               <Payouts
                 historyDepth={targets.historyDepth}
@@ -159,7 +160,7 @@ function StakingApp ({ basePath, className = '' }: Props): React.ReactElement<Pr
               />
             }
             path='payout'
-          />
+          /> */}
           <Route
             element={
               <Pools ownPools={ownPools} />
@@ -172,7 +173,7 @@ function StakingApp ({ basePath, className = '' }: Props): React.ReactElement<Pr
             }
             path='query/:value?'
           />
-          <Route
+          {/* <Route
             element={
               <Slashes
                 ownStashes={ownStashes}
@@ -180,8 +181,8 @@ function StakingApp ({ basePath, className = '' }: Props): React.ReactElement<Pr
               />
             }
             path='slashes'
-          />
-          <Route
+          /> */}
+          {/* <Route
             element={
               <Targets
                 isInElection={isInElection}
@@ -195,7 +196,7 @@ function StakingApp ({ basePath, className = '' }: Props): React.ReactElement<Pr
               />
             }
             path='targets'
-          />
+          /> */}
         </Route>
       </Routes>
       <Actions
