@@ -13,6 +13,8 @@ import { useMemo } from 'react';
 import { createNamedHook, useAccounts, useApi, useCall, useCallMulti, useInflation } from '@polkadot/react-hooks';
 import { arrayFlatten, BN, BN_HUNDRED, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 
+import { convertToNumber } from './util.js';
+
 interface LastEra {
   activeEra: BN;
   eraLength: BN;
@@ -39,6 +41,8 @@ const EMPTY_PARTIAL: Partial<SortedTargets> = {};
 const DEFAULT_FLAGS_ELECTED = { withController: true, withExposure: true, withExposureMeta: true, withPrefs: true };
 const DEFAULT_FLAGS_WAITING = { withController: true, withPrefs: true };
 
+const GENESIS_SUPPLY = new BN('9057971000000000000000');
+const TOTAL_REWARDS = new BN('60386473330000000000');
 const OPT_ERA = {
   transform: ({ activeEra, eraLength, sessionLength }: DeriveSessionInfo): LastEra => ({
     activeEra,
@@ -287,6 +291,33 @@ function extractBaseInfo (api: ApiPromise, allAccounts: string[], electedDerive:
   };
 }
 
+function extractStakingAPY (baseInfo: Partial<SortedTargets>): number {
+  const { totalIssuance, totalStaked } = baseInfo;
+
+  if (!totalIssuance || !totalStaked || totalIssuance.isZero()) {
+    return 0;
+  }
+
+  const totalUnlockedBn = totalIssuance.sub(totalStaked);
+
+  if (totalUnlockedBn.isZero()) {
+    return 0;
+  }
+
+  const [totalUnlocked, genesisSupply, totalStakedNum, totalRewards] = convertToNumber(totalUnlockedBn, GENESIS_SUPPLY, totalStaked, TOTAL_REWARDS);
+
+  const unlockedPercentage = (totalUnlocked * 100) / genesisSupply;
+  const stakingRate = (totalStakedNum * 100) / genesisSupply;
+
+  if (unlockedPercentage <= 0 || stakingRate <= 0) {
+    return 0;
+  }
+
+  const apy = (totalRewards * 100) / (totalUnlocked * unlockedPercentage * stakingRate);
+
+  return parseFloat(apy.toFixed(2));
+}
+
 function useSortedTargetsImpl (favorites: string[], withLedger: boolean): SortedTargets {
   const { api } = useApi();
   const { allAccounts } = useAccounts();
@@ -313,8 +344,11 @@ function useSortedTargetsImpl (favorites: string[], withLedger: boolean): Sorted
 
   const inflation = useInflation(baseInfo?.totalStaked);
 
+  const apy = extractStakingAPY(baseInfo);
+
   return useMemo(
     (): SortedTargets => ({
+      apy,
       counterForNominators,
       counterForValidators,
       historyDepth: api.consts.staking.historyDepth || historyDepth,
@@ -331,7 +365,7 @@ function useSortedTargetsImpl (favorites: string[], withLedger: boolean): Sorted
           : baseInfo
       )
     }),
-    [api, baseInfo, counterForNominators, counterForValidators, historyDepth, inflation, maxNominatorsCount, maxValidatorsCount, minNominatorBond, minValidatorBond]
+    [api, baseInfo, counterForNominators, counterForValidators, historyDepth, inflation, apy, maxNominatorsCount, maxValidatorsCount, minNominatorBond, minValidatorBond]
   );
 }
 
