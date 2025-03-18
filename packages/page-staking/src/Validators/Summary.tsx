@@ -80,12 +80,12 @@ function Summary ({ className = '', stakingOverview, targets: { counterForNomina
             <>{(stakedFraction * 100).toFixed(1)}{percent}</>
           </CardSummary>
         )}
-        {(inflation > 0) && Number.isFinite(inflation) && (
+        {(inflation > 0) && Number.isFinite(inflation) && (stakedFraction > 0) && (
           <CardSummary
             className='media--1200'
-            label={t('inflation')}
+            label={t('APY')}
           >
-            <>{inflation.toFixed(1)}{percent}</>
+            <>{(inflation / stakedFraction).toFixed(1)}{percent}</>
           </CardSummary>
         )}
       </section>
