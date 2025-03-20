@@ -17,7 +17,7 @@ interface Props {
 function TotalIssuance ({ children, className = '', label }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
   const totalIssuanceInitial = useCall<string>(api.query.balances?.totalIssuance);
-  const airdropTotal = useCall<string>(api.query.airdrop.total);
+  const airdropTotal = useCall<string>(api.query.airdrop?.total);
 
   const totalIssuance = useMemo(
     () => {
